@@ -1,0 +1,63 @@
+http:
+  port: 8080
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  get-pedidos:
+    host: localhost
+    paths: '/api/v1/pedidos'
+  get-miembros:
+    host: localhost
+    paths: '/api/v1/miembros'
+  get-productos:
+    host: localhost
+    paths: '/api/v1/productos'
+serviceEndpoints:
+  httppedidos:
+    url: 'http://192.168.99.100:4000'
+  httpmiembros:
+    url: 'http://192.168.99.100:8082'
+  httproductos:
+    url: 'http://192.168.99.100:3000'
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+
+pipelines:
+  pedidos:
+    apiEndpoints:
+      - get-pedidos
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: httppedidos
+              changeOrigin: true
+  miembros:
+    apiEndpoints:
+      - get-miembros
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: httpmiembros
+              changeOrigin: true
+  productos:
+    apiEndpoints:
+      - get-productos
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: httproductos
+              changeOrigin: true
